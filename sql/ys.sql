@@ -5,3 +5,10 @@ CREATE TABLE IF NOT EXISTS `ys`.`square_num` (
     square_num INT(11) NOT NULL DEFAULT 0 COMMENT 'square of num',
     PRIMARY KEY (`num`)
 ) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `ys`.`user` (
+    `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(20) DEFAULT '' COMMENT 'user name',
+    `age` INT(11) DEFAULT '0' COMMENT 'user age',
+    PRIMARY KEY(`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1;
