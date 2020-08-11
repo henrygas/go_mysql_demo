@@ -7,9 +7,15 @@
 mysql -uroot -p < ./sql/ys.sql
 ```
 
++ 引入依赖
+```go
+go get github.com/go-sql-driver/mysql
+go get github.com/jmoiron/sqlx
+```
+
 + 运行程序
 ```go
-go build datasource.go
+go build
 ```
 
 + 依次体验增删查改方法和事务的使用
