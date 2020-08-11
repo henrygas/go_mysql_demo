@@ -18,7 +18,7 @@ go get github.com/jmoiron/sqlx
 go build
 ```
 
-+ 依次体验增删查改方法和事务的使用
++ 依次体验go-sql增删查改方法和事务的使用
 ```
 testInsert()        # 增
 testDelete()        # 删
@@ -26,6 +26,23 @@ testQuery()         # 查
 testUpdate()        # 改
 testTransaction()   # 事务
 ```
+
++ 依次体验sqlx增删查改方法和事务的使用
+```
+sxd.InsertRowDemo()                 # 增
+sxd.InsertByNamedExecDemo()         # 增
+sxd.DeleteDemo()                    # 删
+sxd.UpdateDemo()                    # 改
+sxd.QueryRowDemo()                  # 查
+sxd.QueryMultiRowDemo()             # 查
+sxd.QueryByNamedQueryDemo()         # 查
+sxd.TransactionDemo()               # 事务
+	
+```
+
++ go-sql性能测试
+
++ sqlx性能测试
 
 ## 2. 注意事项
 + 所有操作记得Close

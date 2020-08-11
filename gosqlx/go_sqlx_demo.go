@@ -14,7 +14,8 @@ type SqlxDemo struct {
 }
 
 const (
-	datasourceName    = "root:Jingle@100@tcp(10.21.248.251:3306)/ys?timeout=90s&collation=utf8mb4_bin&parseTime=True"
+	datasourceName = "root:1234@tcp(127.0.0.1:3306)/ys?timeout=90s&collation=utf8mb4_bin&parseTime=True"
+	//datasourceName    = "root:Jingle@100@tcp(10.21.248.251:3306)/ys?timeout=90s&collation=utf8mb4_bin&parseTime=True"
 	insertOneSql      = "insert into `user`(name, age) values (?, ?)"
 	insertOneNamedSql = "insert into `user`(name, age) values (:name, :age)"
 	deleteSql         = "delete from `user` where `id` > ?"
@@ -22,8 +23,8 @@ const (
 	selectOneSql      = "select `id`, `name`, `age` from `user` where `id` = ?"
 	selectMultiSql    = "select `id`, `name`, `age` from `user` where `id` > ?"
 	selectByNamedSql  = "select `id`, `name`, `age` from `user` where `name` = :name"
-	transUpdateSql1   = "update `user` set `age` = 20 where `id` = ?"
-	transUpdateSql2   = "update `user` set `age` = 50 where `id` = ?"
+	transUpdateSql1   = "update `user` set `age` = 21 where `id` = ?"
+	transUpdateSql2   = "update `user` set `age` = 51 where `id` = ?"
 )
 
 type User struct {
@@ -222,7 +223,7 @@ func (sxd *SqlxDemo) TransactionDemo() error {
 		return err
 	}
 	if n != 1 {
-		return errors.New("exec transUpdateSql1 faield")
+		return errors.New("exec transUpdateSql1 failed")
 	}
 
 	rs, err = tx.Exec(transUpdateSql2, 3)
