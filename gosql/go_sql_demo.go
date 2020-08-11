@@ -7,7 +7,7 @@ import (
 	"log"
 )
 
-var datasourceName = "root:Jingle@100@tcp(10.21.248.251:3306)/ys?timeout=90s&collation=utf8mb4_bin"
+var datasourceName = "root:1234@tcp(127.0.0.1:3306)/ys?timeout=90s&collation=utf8mb4_bin"
 
 func TestOpen() {
 	db, err := sql.Open("mysql", datasourceName)
@@ -71,7 +71,7 @@ func TestDelete() {
 	}
 	defer stmtDelete.Close()
 
-	for i := 1; i <= 5; i++ {
+	for i := 1; i <= 10; i++ {
 		result, err := stmtDelete.Exec(i)
 		if err != nil {
 			log.Fatal("failed to exec delete, ", err)
