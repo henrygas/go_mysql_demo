@@ -1,4 +1,4 @@
-package main
+package gosql
 
 import (
 	"database/sql"
@@ -9,7 +9,7 @@ import (
 
 var datasourceName = "root:Jingle@100@tcp(10.21.248.251:3306)/ys?timeout=90s&collation=utf8mb4_bin"
 
-func testOpen() {
+func TestOpen() {
 	db, err := sql.Open("mysql", datasourceName)
 	if err != nil {
 		log.Fatal("fail to open mysql driver, ", err)
@@ -25,7 +25,7 @@ func testOpen() {
 	}
 }
 
-func testInsert() {
+func TestInsert() {
 	db, err := sql.Open("mysql", datasourceName)
 	if err != nil {
 		log.Fatal("failed to open mysql, ", err)
@@ -58,7 +58,7 @@ func testInsert() {
 	}
 }
 
-func testDelete() {
+func TestDelete() {
 	db, err := sql.Open("mysql", datasourceName)
 	if err != nil {
 		log.Fatal("failed to open mysql, ", err)
@@ -84,7 +84,7 @@ func testDelete() {
 	}
 }
 
-func testQuery() {
+func TestQuery() {
 	db, err := sql.Open("mysql", datasourceName)
 	if err != nil {
 		log.Fatal("failed to open mysql, ", err)
@@ -112,7 +112,7 @@ func testQuery() {
 	}
 }
 
-func testUpdate() {
+func TestUpdate() {
 	db, err := sql.Open("mysql", datasourceName)
 	if err != nil {
 		log.Fatal("failed to open mysql, ", err)
@@ -138,7 +138,7 @@ func testUpdate() {
 	}
 }
 
-func testTransaction() {
+func TestTransaction() {
 	db, err := sql.Open("mysql", datasourceName)
 	if err != nil {
 		log.Fatal("failed to open mysql, ", err)
@@ -185,13 +185,4 @@ func testTransaction() {
 	} else {
 		fmt.Println("succ to commit transaction!")
 	}
-}
-
-func main() {
-	//testOpen()
-	//testInsert()
-	//testDelete()
-	//testQuery()
-	//testUpdate()
-	//testTransaction()
 }
