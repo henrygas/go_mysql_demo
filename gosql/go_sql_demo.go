@@ -7,93 +7,127 @@ import (
 	"log"
 )
 
-var datasourceName = "root:1234@tcp(127.0.0.1:3306)/ys?timeout=90s&collation=utf8mb4_bin"
+const (
+	//datasourceName = "root:1234@tcp(127.0.0.1:3306)/ys?timeout=90s&collation=utf8mb4_bin"
+	datasourceName = "root:Jingle@100@tcp(10.21.248.251:3306)/ys?timeout=90s&collation=utf8mb4_bin"
+)
 
-func TestOpen() {
+type SqlDemo struct {
+	db *sql.DB
+}
+
+type SquareNum struct {
+	Num       int `db:"num"`
+	SquareNum int `db:"square_num"`
+}
+
+func NewSqlDemo() (*SqlDemo, error) {
 	db, err := sql.Open("mysql", datasourceName)
 	if err != nil {
-		log.Fatal("fail to open mysql driver, ", err)
-		return
+		log.Println("fail to open mysql driver, ", err)
+		return nil, err
 	}
-	defer db.Close()
 
 	err = db.Ping()
 	if err != nil {
-		log.Fatal("fail to ping mysql, ", err)
-	} else {
-		log.Println("succ to ping mysql!")
+		db.Close()
+		log.Println("fail to ping mysql, ", err)
+		return nil, err
 	}
+
+	sd := SqlDemo{
+		db: db,
+	}
+	return &sd, nil
 }
 
-func TestInsert() {
-	db, err := sql.Open("mysql", datasourceName)
+func (sd *SqlDemo) InsertDemo() error {
+	stmtInsert, err := sd.db.Prepare("INSERT INTO square_num(num, square_num) VALUES (?, ?)")
 	if err != nil {
-		log.Fatal("failed to open mysql, ", err)
-	}
-	defer db.Close()
-
-	stmtInsert, err := db.Prepare("INSERT INTO square_num(num, square_num) VALUES (?, ?)")
-	if err != nil {
-		log.Fatal("failed to prepare insert, ", err)
+		log.Println("failed to prepare insert, ", err)
+		return err
 	}
 	defer stmtInsert.Close()
 
+	var num int64
 	for i := 1; i <= 10; i++ {
 		result, err := stmtInsert.Exec(i, i*i)
 		if err != nil {
-			log.Fatal("failed to exec stmtInsert, ", err)
+			log.Println("failed to exec stmtInsert, ", err)
+			continue
 		}
 
 		lastInsertID, err := result.LastInsertId()
 		if err != nil {
-			log.Fatal("failed to get lastInsertId, ", err)
+			log.Println("failed to get lastInsertId, ", err)
+			continue
 		}
 		fmt.Println("lastInsertID is: ", lastInsertID)
 
 		n, err := result.RowsAffected()
 		if err != nil {
-			log.Fatal("failed to get RowsAffected, ", err)
+			log.Println("failed to get RowsAffected, ", err)
+			continue
 		}
-		fmt.Println("insert finish, affected rows: ", n)
+		num += n
 	}
+	fmt.Println("insert finish, affected rows: ", num)
+	fmt.Println("================================================")
+
+	return nil
 }
 
-func TestDelete() {
-	db, err := sql.Open("mysql", datasourceName)
+func (sd *SqlDemo) DeleteDemo() error {
+	stmtDelete, err := sd.db.Prepare("DELETE FROM square_num WHERE num = ?")
 	if err != nil {
-		log.Fatal("failed to open mysql, ", err)
-	}
-	defer db.Close()
-
-	stmtDelete, err := db.Prepare("DELETE FROM square_num WHERE num = ?")
-	if err != nil {
-		log.Fatal("failed to prepare stmtDelete, ", err)
+		log.Println("failed to prepare stmtDelete, ", err)
+		return err
 	}
 	defer stmtDelete.Close()
 
-	for i := 1; i <= 10; i++ {
+	var num int64
+	for i := 1; i <= 5; i++ {
 		result, err := stmtDelete.Exec(i)
 		if err != nil {
-			log.Fatal("failed to exec delete, ", err)
+			log.Println("failed to exec delete, ", err)
+			continue
 		}
 		n, err := result.RowsAffected()
 		if err != nil {
-			log.Fatal("failed to get rows affected, ", err)
+			log.Println("failed to get rows affected, ", err)
+			continue
 		}
-		fmt.Printf("delete finish, affected rows: %d\n", n)
+		num += n
 	}
+	fmt.Printf("delete finish, affected rows: %d\n", num)
+	fmt.Println("================================================")
+
+	return nil
 }
 
-func TestQuery() {
-	db, err := sql.Open("mysql", datasourceName)
+func (sd *SqlDemo) TruncateDemo() error {
+	result, err := sd.db.Exec("truncate table `square_num`")
 	if err != nil {
-		log.Fatal("failed to open mysql, ", err)
+		log.Println("failed to truncate table square_num, err: ", err)
+		return err
 	}
-	defer db.Close()
 
-	stmtQuery, err := db.Prepare("SELECT square_num FROM square_num WHERE num = ?")
+	n, err := result.RowsAffected()
 	if err != nil {
-		log.Fatal("failed to prepare stmtQuery, ", err)
+		log.Println("failed to get rows affected, err: ", err)
+		return err
+	}
+	fmt.Printf("truncate table finish, rows affected=%d\n", n)
+	fmt.Println("================================================")
+
+	return nil
+}
+
+func (sd *SqlDemo) QueryDemo() error {
+	stmtQuery, err := sd.db.Prepare("SELECT square_num FROM square_num WHERE num = ?")
+	if err != nil {
+		log.Println("failed to prepare stmtQuery, ", err)
+		return err
 	}
 	defer stmtQuery.Close()
 
@@ -104,75 +138,90 @@ func TestQuery() {
 			if err == sql.ErrNoRows {
 				fmt.Printf("num=%d, query result=no rows\n", i)
 			} else {
-				log.Fatal(fmt.Sprintf("failed to query row with num = %d, ", i), err)
+				log.Println(fmt.Sprintf("failed to query row with num = %d, ", i), err)
+				continue
 			}
 		} else {
 			fmt.Printf("num=%d, query result=%d\n", i, value)
 		}
 	}
+	fmt.Println("================================================")
+
+	return nil
 }
 
-func TestUpdate() {
-	db, err := sql.Open("mysql", datasourceName)
+func (sd *SqlDemo) UpdateDemo() error {
+	stmtUpdate, err := sd.db.Prepare("UPDATE square_num SET square_num = ? WHERE num = ?")
 	if err != nil {
-		log.Fatal("failed to open mysql, ", err)
-	}
-	defer db.Close()
-
-	stmtUpdate, err := db.Prepare("UPDATE square_num SET square_num = ? WHERE num = ?")
-	if err != nil {
-		log.Fatal("failed to prepare update, ", err)
+		log.Println("failed to prepare update, ", err)
+		return err
 	}
 	defer stmtUpdate.Close()
 
+	var num int64
 	for i := 1; i <= 10; i++ {
 		result, err := stmtUpdate.Exec(i*2, i)
 		if err != nil {
-			log.Fatal(fmt.Sprintf("failed to exec update, num=%d, ", i), err)
+			log.Println(fmt.Sprintf("failed to exec update, num=%d, ", i), err)
+			continue
 		}
 		n, err := result.RowsAffected()
 		if err != nil {
-			log.Fatal("failed to get rows affected, ", err)
+			log.Println("failed to get rows affected, ", err)
+			continue
 		}
-		fmt.Printf("num=%d, update affected rows=%d\n", i, n)
+		num += n
 	}
+	fmt.Printf("update finish, affected rows=%d\n", num)
+	fmt.Println("================================================")
+
+	return nil
 }
 
-func TestTransaction() {
-	db, err := sql.Open("mysql", datasourceName)
+func (sd *SqlDemo) TransactionDemo() error {
+	tx, err := sd.db.Begin()
 	if err != nil {
-		log.Fatal("failed to open mysql, ", err)
+		log.Println("failed to open transaction, ", err)
+		return err
 	}
-	defer db.Close()
 
-	tx, err := db.Begin()
-	if err != nil {
-		log.Fatal("failed to open transaction, ", err)
-	}
-	defer func(tx *sql.Tx) {
-		err := tx.Rollback()
-		if err != sql.ErrTxDone && err != nil {
-			log.Fatal("failed to rollback transaction, ", err)
+	defer func() {
+		if p := recover(); p != nil {
+			tx.Rollback()
+			panic(p)
+		} else if err != nil {
+			log.Println("rollback, ", err)
+			tx.Rollback()
+		} else {
+			if err = tx.Commit(); err != nil {
+				log.Println("failed to commit, err: ", err)
+			} else {
+				log.Println("succ to commit")
+			}
 		}
-	}(tx)
+	}()
 
-	result, err := tx.Exec("UPDATE square_num SET square_num = square_num - 1 WHERE num < 11")
+	result, err := tx.Exec("UPDATE square_num SET square_num = square_num - 1 WHERE num < 3")
 	if err != nil {
-		log.Fatal("failed to update square_num=square_num-1, ", err)
+		log.Println("failed to update square_num=square_num-1, ", err)
+		return err
 	}
 	n, err := result.RowsAffected()
 	if err != nil {
-		log.Fatal("failed to get rows affected, ", err)
+		log.Println("failed to get rows affected, ", err)
+		return err
 	}
 	fmt.Println("update square_num=square_num-1 affected rows: ", n)
 
-	result, err = tx.Exec("UPDATE square_num SET square_num = square_num + 5 WHERE num < 11")
+	result, err = tx.Exec("UPDATE square_num SET square_num = square_num + 5 WHERE num > 2")
 	if err != nil {
-		log.Fatal("failed to update square_num=square_num+5, ", err)
+		log.Println("failed to update square_num=square_num+5, ", err)
+		return err
 	}
 	n, err = result.RowsAffected()
 	if err != nil {
-		log.Fatal("failed to get rows affected, ", err)
+		log.Println("failed to get rows affected, ", err)
+		return err
 	}
 	fmt.Println("update square_num=square_num+5 affected rows: ", n)
 
@@ -180,9 +229,5 @@ func TestTransaction() {
 		panic("running error happens!")
 	}()
 
-	if err := tx.Commit(); err != nil {
-		log.Fatal("failed to commit transaction, ", err)
-	} else {
-		fmt.Println("succ to commit transaction!")
-	}
+	return nil
 }

@@ -36,7 +36,7 @@ type User struct {
 func NewSqlxDemo() (*SqlxDemo, error) {
 	db, err := sqlx.Connect("mysql", datasourceName)
 	if err != nil {
-		log.Fatal("failed to connect mysql, ", err)
+		log.Println("failed to connect mysql, ", err)
 		return nil, err
 	}
 	db.SetMaxOpenConns(20)
@@ -53,17 +53,20 @@ func NewSqlxDemo() (*SqlxDemo, error) {
 func (sxd *SqlxDemo) InsertRowDemo() error {
 	result, err := sxd.db.Exec(insertOneSql, "江南小王子", 19)
 	if err != nil {
-		log.Fatal("failed to insert one record, ", err)
+		log.Println("failed to insert one record, ", err)
+		return err
 	}
 
 	id, err := result.LastInsertId()
 	if err != nil {
-		log.Fatal("failed to get lastInsertId(), ", err)
+		log.Println("failed to get lastInsertId(), ", err)
+		return err
 	}
 
 	n, err := result.RowsAffected()
 	if err != nil {
-		log.Fatal("failed to get rowsAffected(), ", err)
+		log.Println("failed to get rowsAffected(), ", err)
+		return err
 	}
 
 	fmt.Printf("lastInsertId: %d, rowsAffected: %d\n", id, n)
@@ -78,19 +81,19 @@ func (sxd *SqlxDemo) InsertByNamedExecDemo() error {
 		"age":  30,
 	})
 	if err != nil {
-		log.Fatal("failed to insert by NamedExecDemo, ", err)
+		log.Println("failed to insert by NamedExecDemo, ", err)
 		return err
 	}
 
 	id, err := result.LastInsertId()
 	if err != nil {
-		log.Fatal("failed to get lastInsertId(), ", err)
+		log.Println("failed to get lastInsertId(), ", err)
 		return err
 	}
 
 	n, err := result.RowsAffected()
 	if err != nil {
-		log.Fatal("failed to get rowsAffected(), ", err)
+		log.Println("failed to get rowsAffected(), ", err)
 		return err
 	}
 
@@ -102,12 +105,12 @@ func (sxd *SqlxDemo) InsertByNamedExecDemo() error {
 func (sxd *SqlxDemo) DeleteDemo() error {
 	result, err := sxd.db.Exec(deleteSql, 3)
 	if err != nil {
-		log.Fatal("failed to exec deleteSql, ", err)
+		log.Println("failed to exec deleteSql, ", err)
 		return err
 	}
 	n, err := result.RowsAffected()
 	if err != nil {
-		log.Fatal("failed to get rowsAffected, ", err)
+		log.Println("failed to get rowsAffected, ", err)
 		return err
 	}
 	fmt.Println("delete finish, rows affected: ", n)
@@ -118,13 +121,13 @@ func (sxd *SqlxDemo) DeleteDemo() error {
 func (sxd *SqlxDemo) UpdateDemo() error {
 	result, err := sxd.db.Exec(updateSql, 0)
 	if err != nil {
-		log.Fatal("failed to exec updateSql, ", err)
+		log.Println("failed to exec updateSql, ", err)
 		return err
 	}
 
 	n, err := result.RowsAffected()
 	if err != nil {
-		log.Fatal("failed to get rows affected, ", err)
+		log.Println("failed to get rows affected, ", err)
 		return err
 	}
 
@@ -141,7 +144,7 @@ func (sxd *SqlxDemo) QueryRowDemo() error {
 			fmt.Println("select one result: ", err)
 			return nil
 		} else {
-			log.Fatal("failed to select one, ", err)
+			log.Println("failed to select one, ", err)
 			return err
 		}
 	}
@@ -158,7 +161,7 @@ func (sxd *SqlxDemo) QueryMultiRowDemo() error {
 			fmt.Println("select multi result: ", err)
 			return nil
 		} else {
-			log.Fatal("failed to select multi, ", err)
+			log.Println("failed to select multi, ", err)
 			return err
 		}
 	}
@@ -174,7 +177,7 @@ func (sxd *SqlxDemo) QueryByNamedQueryDemo() error {
 	}
 	rows, err := sxd.db.NamedQuery(selectByNamedSql, u)
 	if err != nil {
-		log.Fatal("failed to selectByNamedSql, ", err)
+		log.Println("failed to selectByNamedSql, ", err)
 		return err
 	}
 	defer rows.Close()
