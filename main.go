@@ -92,7 +92,7 @@ func RunSqlDemo() {
 
 func main() {
 	// ----------------- go-sql-driver/mysql + sql demo ------------------------
-	RunSqlDemo()
+	//RunSqlDemo()
 
 	// ----------------- go-sql-driver/mysql + sqlx demo ------------------------
 	//RunSqlxDemo()
