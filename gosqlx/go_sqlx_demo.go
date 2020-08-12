@@ -180,7 +180,9 @@ func (sxd *SqlxDemo) QueryByNamedQueryDemo() error {
 		log.Println("failed to selectByNamedSql, ", err)
 		return err
 	}
-	defer rows.Close()
+	defer func() {
+		_ = rows.Close()
+	}()
 
 	fmt.Println("QueryByNamedQueryDemo result: ")
 	for rows.Next() {
@@ -206,13 +208,13 @@ func (sxd *SqlxDemo) TransactionDemo() error {
 
 	defer func() {
 		if p := recover(); p != nil {
-			tx.Rollback()
+			_ = tx.Rollback()
 			panic(p)
 		} else if err != nil {
 			fmt.Println("rollback")
-			tx.Rollback()
+			_ = tx.Rollback()
 		} else {
-			err = tx.Commit()
+			_ = tx.Commit()
 			fmt.Println("commit")
 		}
 	}()
