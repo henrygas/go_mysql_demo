@@ -8,8 +8,8 @@ import (
 )
 
 const (
-	//datasourceName = "root:1234@tcp(127.0.0.1:3306)/ys?timeout=90s&collation=utf8mb4_bin"
-	datasourceName   = "root:Jingle@100@tcp(10.21.248.251:3306)/ys?timeout=90s&collation=utf8mb4_bin"
+	datasourceName = "root:1234@tcp(127.0.0.1:3306)/ys?timeout=90s&collation=utf8mb4_bin"
+	//datasourceName   = "root:Jingle@100@tcp(10.21.248.251:3306)/ys?timeout=90s&collation=utf8mb4_bin"
 	truncateSql      = "truncate table `square_num`"
 	insertSql        = "INSERT INTO `square_num`(num, square_num) VALUES (?, ?)"
 	deleteSql        = "DELETE FROM `square_num` WHERE `num` = ?"
