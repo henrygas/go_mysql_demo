@@ -51,7 +51,7 @@ func TestInsert(t *testing.T) {
 	}
 	timeEnd = time.Now()
 	fmt.Printf("insert2 planCount: %d, succCount: %d, cost Time: %f ms, %f ms/op\n",
-		selectCount, succCount, timeEnd.Sub(timeStart).Seconds()*1000, timeEnd.Sub(timeStart).Seconds()*1000/insertCount)
+		insertCount, succCount, timeEnd.Sub(timeStart).Seconds()*1000, timeEnd.Sub(timeStart).Seconds()*1000/insertCount)
 
 	// insert3
 	pureTruncate(sd)
@@ -73,7 +73,7 @@ func TestInsert(t *testing.T) {
 	}
 	timeEnd = time.Now()
 	fmt.Printf("insert3 planCount: %d, succCount: %d, cost Time: %f ms, %f ms/op\n",
-		selectCount, succCount, timeEnd.Sub(timeStart).Seconds()*1000, timeEnd.Sub(timeStart).Seconds()*1000/insertCount)
+		insertCount, succCount, timeEnd.Sub(timeStart).Seconds()*1000, timeEnd.Sub(timeStart).Seconds()*1000/insertCount)
 
 	// insert4
 	pureTruncate(sd)
@@ -107,7 +107,7 @@ func TestInsert(t *testing.T) {
 	}
 	timeEnd = time.Now()
 	fmt.Printf("insert4 planCount: %d, succCount: %d, cost Time: %f ms, %f ms/op\n",
-		selectCount, succCount, timeEnd.Sub(timeStart).Seconds()*1000, timeEnd.Sub(timeStart).Seconds()*1000/insertCount)
+		insertCount, succCount, timeEnd.Sub(timeStart).Seconds()*1000, timeEnd.Sub(timeStart).Seconds()*1000/insertCount)
 }
 
 // test delete

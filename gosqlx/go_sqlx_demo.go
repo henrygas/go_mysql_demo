@@ -14,17 +14,21 @@ type SqlxDemo struct {
 }
 
 const (
-	datasourceName = "root:1234@tcp(127.0.0.1:3306)/ys?timeout=90s&collation=utf8mb4_bin&parseTime=True"
-	//datasourceName    = "root:Jingle@100@tcp(10.21.248.251:3306)/ys?timeout=90s&collation=utf8mb4_bin&parseTime=True"
-	insertOneSql      = "insert into `user`(name, age) values (?, ?)"
-	insertOneNamedSql = "insert into `user`(name, age) values (:name, :age)"
-	deleteSql         = "delete from `user` where `id` > ?"
-	updateSql         = "update `user` set `age` = `age` + 100 where `id` > ?"
-	selectOneSql      = "select `id`, `name`, `age` from `user` where `id` = ?"
-	selectMultiSql    = "select `id`, `name`, `age` from `user` where `id` > ?"
-	selectByNamedSql  = "select `id`, `name`, `age` from `user` where `name` = :name"
-	transUpdateSql1   = "update `user` set `age` = 21 where `id` = ?"
-	transUpdateSql2   = "update `user` set `age` = 51 where `id` = ?"
+	//datasourceName = "root:1234@tcp(127.0.0.1:3306)/ys?timeout=90s&collation=utf8mb4_bin&parseTime=True"
+	datasourceName    = "root:Jingle@100@tcp(10.21.248.251:3306)/ys?timeout=90s&collation=utf8mb4_bin&parseTime=True"
+	truncateSql       = "truncate table `user`"
+	insertOneSql      = "INSERT INTO `user`(name, age) VALUES (?, ?)"
+	insertOneNamedSql = "INSERT INTO `user`(name, age) VALUES (:name, :age)"
+	deleteOneSql      = "DELETE FROM `user` WHERE `id` = ?"
+	deleteOneNamedSql = "DELETE FROM `user` WHERE `id` = :id"
+	updateOneSql      = "UPDATE `user` SET `age` = `age` + 100 WHERE `id` = ?"
+	updateOneNamedSql = "UPDATE `user` SET `age` = `age` + 100 WHERE `id` = :id"
+	selectOneSql      = "SELECT `id`, `name`, `age` from `user` WHERE `id` = ?"
+	selectOneNamedSql = "SELECT `id`, `name`, `age` FROM `user` WHERE `id` = :id"
+	selectMultiSql    = "SELECT `id`, `name`, `age` from `user` WHERE `id` > ?"
+	selectByNameSql   = "SELECT `id`, `name`, `age` from `user` WHERE `name` = :name"
+	transUpdateSql1   = "UPDATE `user` set `age` = 21 WHERE `id` = ?"
+	transUpdateSql2   = "UPDATE `user` set `age` = 51 WHERE `id` = ?"
 )
 
 type User struct {
@@ -103,9 +107,9 @@ func (sxd *SqlxDemo) InsertByNamedExecDemo() error {
 
 // delete records
 func (sxd *SqlxDemo) DeleteDemo() error {
-	result, err := sxd.db.Exec(deleteSql, 3)
+	result, err := sxd.db.Exec(deleteOneSql, 3)
 	if err != nil {
-		log.Println("failed to exec deleteSql, ", err)
+		log.Println("failed to exec deleteOneSql, ", err)
 		return err
 	}
 	n, err := result.RowsAffected()
@@ -119,9 +123,9 @@ func (sxd *SqlxDemo) DeleteDemo() error {
 
 // update records
 func (sxd *SqlxDemo) UpdateDemo() error {
-	result, err := sxd.db.Exec(updateSql, 0)
+	result, err := sxd.db.Exec(updateOneSql, 0)
 	if err != nil {
-		log.Println("failed to exec updateSql, ", err)
+		log.Println("failed to exec updateOneSql, ", err)
 		return err
 	}
 
@@ -175,9 +179,9 @@ func (sxd *SqlxDemo) QueryByNamedQueryDemo() error {
 	u := User{
 		Name: "江南草上飞",
 	}
-	rows, err := sxd.db.NamedQuery(selectByNamedSql, u)
+	rows, err := sxd.db.NamedQuery(selectByNameSql, u)
 	if err != nil {
-		log.Println("failed to selectByNamedSql, ", err)
+		log.Println("failed to selectByNameSql, ", err)
 		return err
 	}
 	defer func() {
@@ -202,7 +206,7 @@ func (sxd *SqlxDemo) QueryByNamedQueryDemo() error {
 func (sxd *SqlxDemo) TransactionDemo() error {
 	tx, err := sxd.db.Begin()
 	if err != nil {
-		fmt.Printf("begin transaction failed: ", err)
+		fmt.Println("begin transaction failed: ", err)
 		return err
 	}
 
