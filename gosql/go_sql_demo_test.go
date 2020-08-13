@@ -464,6 +464,8 @@ func pureInsert1(sd *SqlDemo, i int) (int64, error) {
 		return 0, err
 	}
 
+	sd.db.Exec("select name, age from user  where id = :id", sql.Named("id", 1))
+
 	return n, nil
 }
 
