@@ -18,31 +18,43 @@ go get github.com/jmoiron/sqlx
 go build
 ```
 
-+ 依次体验go-sql增删查改方法和事务的使用
-```
-testInsert()        # 增
-testDelete()        # 删
-testQuery()         # 查
-testUpdate()        # 改
-testTransaction()   # 事务
-```
++ 依次体验go-sql增删查改方法和事务的使用[单元测试]
 
-+ 依次体验sqlx增删查改方法和事务的使用
-```
-sxd.InsertRowDemo()                 # 增
-sxd.InsertByNamedExecDemo()         # 增
-sxd.DeleteDemo()                    # 删
-sxd.UpdateDemo()                    # 改
-sxd.QueryRowDemo()                  # 查
-sxd.QueryMultiRowDemo()             # 查
-sxd.QueryByNamedQueryDemo()         # 查
-sxd.TransactionDemo()               # 事务
-	
-```
+main.go里取消RunSqlDemo()行的注释，增加RunSqlxDemo()行的注释
+然后运行 
+    
+    go build -o ./bin/go_sql_demo.exe .
+    cd ./bin/
+    go_sql_demo.exe
+
++ 依次体验go-sqlx增删查改方法和事务的使用
+
+main.go里取消RunSqlxDemo()行的注释，增加RunSqlDemo()行的注释
+然后运行 
+    
+    go build -o ./bin/go_sqlx_demo.exe .
+    cd ./bin/
+    go_sqlx_demo.exe
 
 + go-sql性能测试
 
-+ sqlx性能测试
+./gosql/go_sql_demo_test.go
+```
+TestInsert()        # 增
+TestDelete()        # 删
+TestUpdate()        # 改
+TestSelect()        # 查
+```
+
++ go-sqlx性能测试
+
+./gosqlx/go_sqlx_demo_test.go
+```
+TestInsert()        # 增
+TestDelete()        # 删
+TestUpdate()        # 改
+TestSelect()        # 查
+```
 
 ## 2. 注意事项
 + 所有操作记得Close
